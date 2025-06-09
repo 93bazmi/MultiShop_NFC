@@ -1,0 +1,161 @@
+import { useLocation } from "wouter";
+import { 
+  Store, 
+  PlusCircle,
+  Wifi
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/ui/app-sidebar"
+import { useAuth } from "@/components/auth/AuthProvider"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { LogIn, LogOut, User } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
+
+const MainLayout = ({ children }: MainLayoutProps) => {
+  const [location] = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [showProfile, setShowProfile] = useState(false);
+
+  const navigation = [
+    { name: "ร้านค้า", href: "/shops", icon: Store },
+    { name: "เติมเงิน", href: "/topup", icon: PlusCircle },
+    { name: "ทดสอบ NFC", href: "/nfc-test", icon: Wifi }, // เพิ่มเมนูทดสอบ NFC
+  ];
+
+  const getPageTitle = () => {
+    const route = navigation.find(item => item.href === location);
+    return route ? route.name : "หน้า";
+  };
+
+  const handleLogin = () => {
+    window.addEventListener("message", authComplete);
+    const h = 500;
+    const w = 350;
+    const left = screen.width / 2 - w / 2;
+    const top = screen.height / 2 - h / 2;
+
+    const authWindow = window.open(
+      "https://replit.com/auth_with_repl_site?domain=" + location.host,
+      "_blank",
+      "modal=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=" +
+        w +
+        ", height=" +
+        h +
+        ", top=" +
+        top +
+        ", left=" +
+        left
+    );
+
+    function authComplete(e: MessageEvent) {
+      if (e.data !== "auth_complete") {
+        return;
+      }
+
+      window.removeEventListener("message", authComplete);
+      if (authWindow) {
+        authWindow.close();
+      }
+      location.reload();
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Main Content */}
+      <div className="flex-1 w-full max-w-5xl mx-auto">
+        {/* Header */}
+        <header className="bg-white shadow-sm sticky top-0 z-10">
+          <div className="mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <div>
+              {/* เพิ่มเมนูนำทาง */}
+              <nav className="flex space-x-8">
+                {navigation.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      "inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900",
+                      location === item.href ? "border-b-2 border-primary" : "hover:border-b-2 hover:border-gray-300"
+                    )}
+                  >
+                    <item.icon className="mr-2 h-5 w-5" aria-hidden="true" />
+                    {item.name}
+                  </a>
+                ))}
+              </nav>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              {isAuthenticated && user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>
+                          {user.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium">{user.name}</p>
+                        <p className="w-[200px] truncate text-sm text-muted-foreground">
+                          @{user.username}
+                        </p>
+                      </div>
+                    </div>
+                    <DropdownMenuItem onClick={logout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      ออกจากระบบ
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button onClick={handleLogin} size="sm">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  เข้าสู่ระบบ
+                </Button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-white border-t mt-8">
+          <div className="mx-auto px-4 py-4 sm:px-6 lg:px-8">
+            <p className="text-center text-sm text-gray-500">
+              ระบบชำระเงิน NFC &copy; {new Date().getFullYear()}
+            </p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default MainLayout;

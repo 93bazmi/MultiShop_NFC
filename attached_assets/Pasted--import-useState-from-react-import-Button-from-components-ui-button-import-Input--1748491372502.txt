@@ -1,0 +1,131 @@
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "./AuthProvider";
+import { LogIn, UserPlus, Loader2 } from "lucide-react";
+
+export default function LoginButton() {
+  const { login, register, isLoading, error } = useAuth();
+  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [registerForm, setRegisterForm] = useState({ username: '', password: '', name: '' });
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await login(loginForm.username, loginForm.password);
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await register(registerForm.username, registerForm.password, registerForm.name);
+  };
+
+  return (
+    <Tabs defaultValue="login" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="login">เข้าสู่ระบบ</TabsTrigger>
+        <TabsTrigger value="register">สร้างบัญชี</TabsTrigger>
+      </TabsList>
+
+      {error && (
+        <Alert className="mt-4 border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <TabsContent value="login" className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="login-username">Username</Label>
+            <Input
+              id="login-username"
+              type="text"
+              placeholder="กรอก username"
+              value={loginForm.username}
+              onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="login-password">Password</Label>
+            <Input
+              id="login-password"
+              type="password"
+              placeholder="กรอก password"
+              value={loginForm.password}
+              onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+              required
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                กำลังเข้าสู่ระบบ...
+              </>
+            ) : (
+              <>
+                <LogIn className="mr-2 h-4 w-4" />
+                เข้าสู่ระบบ
+              </>
+            )}
+          </Button>
+        </form>
+      </TabsContent>
+
+      <TabsContent value="register" className="space-y-4">
+        <form onSubmit={handleRegister} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="register-username">Username</Label>
+            <Input
+              id="register-username"
+              type="text"
+              placeholder="เลือก username"
+              value={registerForm.username}
+              onChange={(e) => setRegisterForm({ ...registerForm, username: e.target.value })}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="register-password">Password</Label>
+            <Input
+              id="register-password"
+              type="password"
+              placeholder="เลือก password"
+              value={registerForm.password}
+              onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="register-name">ชื่อ (ไม่บังคับ)</Label>
+            <Input
+              id="register-name"
+              type="text"
+              placeholder="ชื่อจริง"
+              value={registerForm.name}
+              onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                กำลังสร้างบัญชี...
+              </>
+            ) : (
+              <>
+                <UserPlus className="mr-2 h-4 w-4" />
+                สร้างบัญชี
+              </>
+            )}
+          </Button>
+        </form>
+      </TabsContent>
+    </Tabs>
+  );
+}

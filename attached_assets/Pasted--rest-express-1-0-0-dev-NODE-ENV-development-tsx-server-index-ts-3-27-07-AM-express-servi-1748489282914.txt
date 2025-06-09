@@ -1,0 +1,416 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+3:27:07 AM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Error:   Failed to scan for dependencies from entries:
+  /home/runner/workspace/client/index.html
+
+  ✘ [ERROR] The symbol "DropdownMenu" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:205:6:
+      205 │ const DropdownMenu = DropdownMenuPrimitive.Root
+          ╵       ~~~~~~~~~~~~
+
+  The symbol "DropdownMenu" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:7:6:
+      7 │ const DropdownMenu = DropdownMenuPrimitive.Root
+        ╵       ~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuTrigger" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:207:6:
+      207 │ const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
+          ╵       ~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuTrigger" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:9:6:
+      9 │ const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
+        ╵       ~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuGroup" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:209:6:
+      209 │ const DropdownMenuGroup = DropdownMenuPrimitive.Group
+          ╵       ~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuGroup" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:11:6:
+      11 │ const DropdownMenuGroup = DropdownMenuPrimitive.Group
+         ╵       ~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuPortal" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:211:6:
+      211 │ const DropdownMenuPortal = DropdownMenuPrimitive.Portal
+          ╵       ~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuPortal" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:13:6:
+      13 │ const DropdownMenuPortal = DropdownMenuPrimitive.Portal
+         ╵       ~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuSub" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:213:6:
+      213 │ const DropdownMenuSub = DropdownMenuPrimitive.Sub
+          ╵       ~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuSub" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:15:6:
+      15 │ const DropdownMenuSub = DropdownMenuPrimitive.Sub
+         ╵       ~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuRadioGroup" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:215:6:
+      215 │ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
+          ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuRadioGroup" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:17:6:
+      17 │ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
+         ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuSubTrigger" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:217:6:
+      217 │ const DropdownMenuSubTrigger = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuSubTrigger" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:19:6:
+      19 │ const DropdownMenuSubTrigger = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuSubContent" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:239:6:
+      239 │ const DropdownMenuSubContent = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuSubContent" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:41:6:
+      41 │ const DropdownMenuSubContent = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuContent" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:255:6:
+      255 │ const DropdownMenuContent = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuContent" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:57:6:
+      57 │ const DropdownMenuContent = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuItem" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:273:6:
+      273 │ const DropdownMenuItem = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuItem" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:75:6:
+      75 │ const DropdownMenuItem = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuCheckboxItem" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:291:6:
+      291 │ const DropdownMenuCheckboxItem = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuCheckboxItem" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:93:6:
+      93 │ const DropdownMenuCheckboxItem = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuRadioItem" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:315:6:
+      315 │ const DropdownMenuRadioItem = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuRadioItem" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:117:6:
+      117 │ const DropdownMenuRadioItem = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuLabel" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:337:6:
+      337 │ const DropdownMenuLabel = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuLabel" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:139:6:
+      139 │ const DropdownMenuLabel = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuSeparator" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:355:6:
+      355 │ const DropdownMenuSeparator = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuSeparator" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:157:6:
+      157 │ const DropdownMenuSeparator = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "DropdownMenuShortcut" has already been declared
+
+    client/src/components/ui/dropdown-menu.tsx:367:6:
+      367 │ const DropdownMenuShortcut = ({
+          ╵       ~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "DropdownMenuShortcut" was originally declared here:
+
+    client/src/components/ui/dropdown-menu.tsx:169:6:
+      169 │ const DropdownMenuShortcut = ({
+          ╵       ~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenu"
+
+    client/src/components/ui/dropdown-menu.tsx:381:2:
+      381 │   DropdownMenu,
+          ╵   ~~~~~~~~~~~~
+
+  The name "DropdownMenu" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:183:2:
+      183 │   DropdownMenu,
+          ╵   ~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuTrigger"
+
+    client/src/components/ui/dropdown-menu.tsx:382:2:
+      382 │   DropdownMenuTrigger,
+          ╵   ~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuTrigger" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:184:2:
+      184 │   DropdownMenuTrigger,
+          ╵   ~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuContent"
+
+    client/src/components/ui/dropdown-menu.tsx:383:2:
+      383 │   DropdownMenuContent,
+          ╵   ~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuContent" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:185:2:
+      185 │   DropdownMenuContent,
+          ╵   ~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuItem"
+
+    client/src/components/ui/dropdown-menu.tsx:384:2:
+      384 │   DropdownMenuItem,
+          ╵   ~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuItem" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:186:2:
+      186 │   DropdownMenuItem,
+          ╵   ~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuCheckboxItem"
+
+    client/src/components/ui/dropdown-menu.tsx:385:2:
+      385 │   DropdownMenuCheckboxItem,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuCheckboxItem" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:187:2:
+      187 │   DropdownMenuCheckboxItem,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuRadioItem"
+
+    client/src/components/ui/dropdown-menu.tsx:386:2:
+      386 │   DropdownMenuRadioItem,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuRadioItem" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:188:2:
+      188 │   DropdownMenuRadioItem,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuLabel"
+
+    client/src/components/ui/dropdown-menu.tsx:387:2:
+      387 │   DropdownMenuLabel,
+          ╵   ~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuLabel" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:189:2:
+      189 │   DropdownMenuLabel,
+          ╵   ~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuSeparator"
+
+    client/src/components/ui/dropdown-menu.tsx:388:2:
+      388 │   DropdownMenuSeparator,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuSeparator" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:190:2:
+      190 │   DropdownMenuSeparator,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuShortcut"
+
+    client/src/components/ui/dropdown-menu.tsx:389:2:
+      389 │   DropdownMenuShortcut,
+          ╵   ~~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuShortcut" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:191:2:
+      191 │   DropdownMenuShortcut,
+          ╵   ~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuGroup"
+
+    client/src/components/ui/dropdown-menu.tsx:390:2:
+      390 │   DropdownMenuGroup,
+          ╵   ~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuGroup" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:192:2:
+      192 │   DropdownMenuGroup,
+          ╵   ~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuPortal"
+
+    client/src/components/ui/dropdown-menu.tsx:391:2:
+      391 │   DropdownMenuPortal,
+          ╵   ~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuPortal" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:193:2:
+      193 │   DropdownMenuPortal,
+          ╵   ~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuSub"
+
+    client/src/components/ui/dropdown-menu.tsx:392:2:
+      392 │   DropdownMenuSub,
+          ╵   ~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuSub" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:194:2:
+      194 │   DropdownMenuSub,
+          ╵   ~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuSubContent"
+
+    client/src/components/ui/dropdown-menu.tsx:393:2:
+      393 │   DropdownMenuSubContent,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuSubContent" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:195:2:
+      195 │   DropdownMenuSubContent,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuSubTrigger"
+
+    client/src/components/ui/dropdown-menu.tsx:394:2:
+      394 │   DropdownMenuSubTrigger,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuSubTrigger" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:196:2:
+      196 │   DropdownMenuSubTrigger,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "DropdownMenuRadioGroup"
+
+    client/src/components/ui/dropdown-menu.tsx:395:2:
+      395 │   DropdownMenuRadioGroup,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+  The name "DropdownMenuRadioGroup" was originally exported here:
+
+    client/src/components/ui/dropdown-menu.tsx:197:2:
+      197 │   DropdownMenuRadioGroup,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+
+    at failureErrorWithLog (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:943:7)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
