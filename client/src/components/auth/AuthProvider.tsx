@@ -70,8 +70,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // mount: fetch shop ตาม session ปัจจุบัน
   useEffect(() => {
-    fetchAuth();
-    fetchShop();
+    const init = async () => {
+      const role = await fetchAuth();
+      if (role !== "admin") {
+        await fetchShop();
+      } else {
+        setIsLoading(false);
+      }
+    };
+    init();
   }, []);
 
   const login = async (
@@ -95,7 +102,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
       setUser(payload.user);
       setRole(payload.user.role);
-      await fetchShop(); // ดึง shop จาก session หลัง login
+      if (payload.user.role !== "admin") {
+        await fetchShop();
+      }
       return payload.user.id;
     } catch (err) {
       console.error("Login error:", err);
@@ -106,18 +115,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const fetchAuth = async () => {
+  const fetchAuth = async (): Promise<"admin" | "user" | null> => {
     try {
       const res = await fetch(`${API_URL}/api/auth/me`, {
         credentials: "include",
       });
       if (res.ok) {
         const data = await res.json();
-        setRole(data.role); // ✅ สำคัญ
+        setRole(data.role);
+        return data.role;
       }
     } catch (err) {
       console.error(err);
     }
+    return null;
   };
 
   const logout = async (): Promise<void> => {
