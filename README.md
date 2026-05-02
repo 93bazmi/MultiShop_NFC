@@ -4,6 +4,9 @@ MultiShop NFC is a multi-vendor event marketplace system that allows customers t
 
 This project is designed for events like festivals or markets, making payments faster, easier, and cashless 💳
 
+# 💚 Live Demo
+https://multi-shop-nfc.vercel.app
+
 ## 📌 Overview
 
 This system is designed for event usage, with the following key features:
@@ -43,7 +46,7 @@ This system is designed for event usage, with the following key features:
 
 **NFC:** POS device with NFC support
 
-**Development:** Replit
+**Deployment**: Vercel(Frontend), Render(Backend)
 
 ## 🚀 Getting Started
 
