@@ -56,7 +56,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.cookie("sessionId", sessionId, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
+        secure: true, 
         // secure: true, // in prod under HTTPS
       });
       return res.status(200).json({ sessionId, user });

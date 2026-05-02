@@ -18,9 +18,10 @@ export default function PaymentHistoryPage() {
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
   const { shop } = useAuth(); // <<--- ดึง shop จาก context
   const shopId = shop?.id;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    fetch("/api/payment-history", { credentials: "include" })
+    fetch(`${API_URL}/api/payment-history`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Unauthorized");
         return res.json();

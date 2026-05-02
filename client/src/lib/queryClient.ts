@@ -7,12 +7,14 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const res = await fetch(`${API_URL}${url}`, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -32,7 +34,7 @@ export const getQueryFn: <T>(options: {
     const url = queryKey[0] as string;
     console.log(`Fetching: ${url}`);
     
-    const res = await fetch(url, {
+    const res = await fetch(`${API_URL}${url}`, {
       credentials: "include",
     });
 

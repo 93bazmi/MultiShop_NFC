@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cors from "cors";
 
 // Extend Request type for user session
 declare global {
@@ -13,7 +14,17 @@ declare global {
 }
 
 const app = express();
+
+app.use(cors({
+  origin: [
+    "http://localhost:5000",        
+    "https://multi-shop-nfc.vercel.app"
+  ],
+  credentials: true,
+}));
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 

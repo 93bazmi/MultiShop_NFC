@@ -39,6 +39,8 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [user, setUser] = useState<User | null>(null);
   const [shop, setShop] = useState<Shop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +51,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchShop = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/shops/me", { credentials: "include" });
+      const res = await fetch(`${API_URL}/api/shops/me`, {
+        credentials: "include",
+      });
       if (res.ok) {
         const data: Shop = await res.json();
         setShop(data);
@@ -78,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsLoading(true);
     setShop(null); // reset ก่อน กัน state ค้าง
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -104,7 +108,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchAuth = async () => {
     try {
-      const res = await fetch("/api/auth/me", { credentials: "include" });
+      const res = await fetch(`${API_URL}/api/auth/me`, {
+        credentials: "include",
+      });
       if (res.ok) {
         const data = await res.json();
         setRole(data.role); // ✅ สำคัญ
@@ -116,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async (): Promise<void> => {
     try {
-      await fetch("/api/auth/logout", {
+      await fetch(`${API_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

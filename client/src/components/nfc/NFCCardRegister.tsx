@@ -49,6 +49,8 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function NFCCardRegister() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -95,7 +97,10 @@ export function NFCCardRegister() {
     const timer = setTimeout(async () => {
       try {
         const res = await fetch(
-          `/api/nfc-cards/by-card-id/${encodeURIComponent(value.trim())}`,
+          `${API_URL}/api/nfc-cards/by-card-id/${encodeURIComponent(value.trim())}`,
+          {
+            credentials: "include",
+          },
         );
         if (res.ok) {
           setCardExists(true); // มีแล้ว
