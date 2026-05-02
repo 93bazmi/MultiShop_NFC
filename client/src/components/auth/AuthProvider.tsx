@@ -137,7 +137,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         method: "POST",
         credentials: "include",
       });
-      setShop(null); // clear state ทันที
+
+      setUser(null);
+      setShop(null);
+      setRole(null);
     } catch (err) {
       console.error("Error logging out:", err);
     }
@@ -146,7 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const value: AuthContextType = {
     user,
     shop,
-    isAuthenticated: !!shop,
+    isAuthenticated: !!user,
     isLoading,
     role,
     login,

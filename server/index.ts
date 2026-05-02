@@ -16,10 +16,7 @@ declare global {
 const app = express();
 
 app.use(cors({
-  origin: [
-    "http://localhost:5000",        
-    "https://multi-shop-nfc.vercel.app"
-  ],
+  origin: process.env.CLIENT_URL,
   credentials: true,
 }));
 
