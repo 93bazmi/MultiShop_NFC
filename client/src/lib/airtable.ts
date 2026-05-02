@@ -1,10 +1,7 @@
-// Airtable configuration
 export const config = {
-  apiKey: import.meta.env.VITE_AIRTABLE_API_KEY || "patAYWAEknRTyXdKG.cbd23a372b75f8118e9c9d1920127d1a2753ce9206565df236c2af733b0dfc27",
-  baseId: import.meta.env.VITE_AIRTABLE_BASE_ID || "appQLP7XIvyUmebOQ",
+  databaseProvider: import.meta.env.VITE_DATABASE_PROVIDER || "postgresql",
 };
 
-// API endpoint prefixes
 export const API = {
   USERS: '/api/users',
   SHOPS: '/api/shops',
@@ -15,7 +12,6 @@ export const API = {
   NFC_TOPUP: "/api/nfc-topup" // เพิ่ม endpoint สำหรับเติมเงิน
 };
 
-// Function to format API query parameters
 export function formatQuery(params: Record<string, any>) {
   const queryParams = Object.entries(params)
     .filter(([_, value]) => value !== undefined && value !== null)

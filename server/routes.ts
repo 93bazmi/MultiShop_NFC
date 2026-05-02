@@ -1,44 +1,20 @@
 import type { Express, Request, Response } from "express";
-import cookieParser from "cookie-parser";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import {
-  insertUserSchema,
-  insertShopSchema,
-  insertProductSchema,
   insertNfcCardSchema,
   insertTransactionSchema,
-  NfcCard,
 } from "@shared/schema";
 import { ZodError } from "zod";
-import { fromAirtableRecord, airtableConfig, TABLES } from "./airtable"; // Ensure TABLES is imported
 import type { Transaction } from "@shared/schema";
-
-// Helper หาเลข id ใหม่ (ใช้กับตาราง NFCCards)
-async function getNextCardId(): Promise<number> {
-  const records = await (storage as any)
-    .base("NFCCards")
-    .select({
-      sort: [{ field: "id", direction: "desc" }],
-      maxRecords: 1,
-    })
-    .all();
-
-  const lastId = records.length > 0 ? parseInt(records[0].fields.id) : 0;
-  return lastId + 1;
-}
 
 //นับเลขออเดอร์
 async function getNextOrderNumber(): Promise<number> {
-  const records = await (storage as any)
-    .base("Transactions")
-    .select({
-      sort: [{ field: "orderNumber", direction: "desc" }],
-      maxRecords: 1,
-    })
-    .all();
-
-  const latest = records[0]?.fields?.orderNumber || 0;
+  const records = await storage.getTransactions();
+  const latest = records.reduce(
+    (maxOrder, transaction) => Math.max(maxOrder, Number(transaction.orderNumber ?? 0)),
+    0,
+  );
   return latest + 1;
 }
 
@@ -46,7 +22,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Session store
   const sessions = new Map<
     string,
-    { userId: number; username: string; loginTime: number; shopId: number }
+    { userId: number; username: string; loginTime: number; shopId: number; role: string; }
   >();
 
   const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
@@ -59,13 +35,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .status(400)
           .json({ message: "กรุณากรอก username และ password" });
       }
-      // Use Airtable instance from the storage module
-      const base = (storage as any).base;
-      const users = await base(TABLES.SHOPS) // corrected access
-        .select({ filterByFormula: `{username} = '${username}'` })
-        .firstPage();
-      const user =
-        users.length > 0 ? fromAirtableRecord("shops", users[0]) : null;
+
+      const user = await storage.getUserByUsername(username);
       if (!user || user.password !== password) {
         return res
           .status(401)
@@ -79,6 +50,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: Number(user.id),
         username: user.username,
         loginTime: Date.now(),
+        role: user.role ?? "user",
         shopId: Number(user.id),
       });
 
@@ -109,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       // ถ้า userId = shopId จริง
-      const shop = await storage.getShop(session.userId);
+      const shop = await storage.getShopByOwnerId(session.userId);
       if (!shop) {
         return res.status(404).json({ message: "Shop not found" });
       }
@@ -142,7 +114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       id: session.userId.toString(),
       name: session.username,
       username: session.username,
-      roles: ["user"],
+      role: session.role,
     });
   });
 
@@ -334,157 +306,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Update card balance
-      let updatedCard;
-      try {
-        // Search for the card again by cardId to get the latest Airtable record ID
-        const freshAirtableCard = await storage.getNfcCardByCardId(card.cardId);
-
-        if (freshAirtableCard && (freshAirtableCard as any).airtableRecordId) {
-          // Use the Airtable record ID directly for updates
-          console.log(
-            `Using Airtable Record ID ${(freshAirtableCard as any).airtableRecordId} for direct update`,
-          );
-
-          try {
-            // Update the card using Airtable's API directly
-            const airtableFields = {
-              balance: card.balance + amount,
-              lastUsed: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Bangkok",
-              }),
-            };
-
-            // Airtable expects fields to be passed directly, not wrapped in a fields object
-            // Access the Airtable base from the storage implementation
-            if ((storage as any).base) {
-              const updatedRecord = await (storage as any)
-                .base("NFCCards")
-                .update(
-                  (freshAirtableCard as any).airtableRecordId,
-                  airtableFields,
-                );
-              console.log(
-                "Successfully updated card in Airtable:",
-                updatedRecord.fields.balance,
-              );
-            } else {
-              throw new Error("Airtable base not available");
-            }
-
-            updatedCard = {
-              ...card,
-              balance: card.balance + amount,
-              lastUsed: new Date(),
-            };
-          } catch (directUpdateError) {
-            console.error(
-              "Error with direct Airtable update:",
-              directUpdateError,
-            );
-            throw directUpdateError;
-          }
-        } else {
-          // Fall back to regular update
-          updatedCard = await storage.updateNfcCard(card.id, {
-            balance: card.balance + amount,
-            lastUsed: new Date(),
-          });
-        }
-      } catch (updateError) {
-        console.error("Error updating card:", updateError);
-        // Create fallback updated card
-        updatedCard = {
-          ...card,
-          balance: card.balance + amount,
-          lastUsed: new Date(),
-        };
-        console.log(
-          `Using fallback updated card with balance ${updatedCard.balance}`,
-        );
-      }
+      const updatedCard = await storage.updateNfcCard(card.id, {
+        balance: card.balance + amount,
+        lastUsed: new Date(),
+      });
 
       // Create transaction record
-      let transaction;
-      try {
-        // Try to create transaction directly in Airtable
-        if ((storage as any).base) {
-          try {
-            // Create fields object directly without 'fields' wrapper
-            const transactionFields = {
-              orderNumber, // 🆕 เพิ่มตรงนี้
-              amount: amount,
-              cardId: card.cardId, // Use actual NFC card ID instead of internal ID
-              status: "completed",
-              type: "topup", // Set transaction type to topup
-              previousBalance: card.balance,
-              newBalance: card.balance + amount,
-              timestamp: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Bangkok",
-              }),
-            };
-
-            // Create the transaction directly
-            const createdRecord = await (storage as any)
-              .base("Transactions")
-              .create(transactionFields);
-            transaction = {
-              id:
-                parseInt(createdRecord.id) ||
-                Math.floor(Math.random() * 1000) + 1000,
-              orderNumber: createdRecord.fields?.orderNumber, // << ตรงนี้!
-              amount,
-              cardId: card.cardId, // Use actual NFC card ID instead of internal ID
-              type: "topup", // For our interface
-              status: "completed",
-              previousBalance: card.balance,
-              newBalance: card.balance + amount,
-              timestamp: new Date(
-                new Date().toLocaleString("en-US", {
-                  timeZone: "Asia/Bangkok",
-                }),
-              ),
-            };
-            console.log("Successfully created transaction in Airtable");
-          } catch (directTransactionError) {
-            console.error(
-              "Error creating transaction directly in Airtable:",
-              directTransactionError,
-            );
-            throw directTransactionError;
-          }
-        } else {
-          // Fall back to storage interface
-          // Convert cardId (string) to an integer for the transaction
-          const numericCardId = parseInt(card.id.toString());
-
-          transaction = await storage.createTransaction({
-            amount,
-            cardId: numericCardId, // Use numeric ID for database schema compatibility
-            type: "topup", // Set transaction type to topup
-            shopId: 0, // Use 0 for topup transactions
-            status: "completed",
-            previousBalance: card.balance,
-            newBalance: card.balance + amount,
-          });
-        }
-      } catch (transactionError) {
-        console.error("Error creating transaction:", transactionError);
-        // Create fallback transaction
-        transaction = {
-          id: transaction?.id,
-          orderNumber, //  อิอิ
-          amount,
-          cardId: card.cardId, // Use actual NFC card ID instead of internal ID
-          type: "topup",
-          status: "completed",
-          previousBalance: card.balance,
-          newBalance: card.balance + amount,
-          timestamp: new Date(
-            new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" }),
-          ),
-        };
-        console.log(`Using fallback transaction with ID ${transaction.id}`);
-      }
+      const transaction = await storage.createTransaction({
+        amount,
+        cardId: card.id,
+        type: "topup",
+        status: "completed",
+        previousBalance: card.balance,
+        newBalance: card.balance + amount,
+        orderNumber,
+      });
 
       res.json({
         success: true,
@@ -524,7 +360,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes - simplified
   app.get("/api/products", async (req, res) => {
     try {
-      const shopId = req.query.shopId ? parseInt(req.query.shopId) : undefined;
+      const shopId = req.query.shopId
+        ? parseInt(req.query.shopId as string, 10)
+        : undefined;
       const shopType = req.query.shopType as string | undefined;
 
       let products;
@@ -614,12 +452,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     validateBody(insertNfcCardSchema),
     async (req, res) => {
       try {
-        // 1. หา id ใหม่
-        const newId = await getNextCardId();
-        // 2. เพิ่ม id ไปใน req.body
-        const dataWithId = { ...req.body, id: newId.toString() };
-        // 3. สร้างบัตร
-        const card = await storage.createNfcCard(dataWithId);
+        const card = await storage.createNfcCard(req.body);
         res.json(card);
       } catch (error) {
         console.error("Error creating NFC card:", error);
@@ -728,17 +561,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
 
-        // Create the transaction record
-        // Make sure to use card.cardId instead of card.id for transaction records
-        if (req.body.cardId) {
-          // If this is a card transaction, fetch the card to get the cardId (NFC ID)
-          const card = await storage.getNfcCard(req.body.cardId);
-          if (card) {
-            // Use the actual NFC card ID instead of internal ID
-            req.body.cardId = card.cardId;
-          }
-        }
-
         const transaction = await storage.createTransaction(req.body);
         res.json(transaction);
       } catch (error) {
@@ -800,60 +622,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`Error getting shop with ID ${shopIdNum}:`, error);
       }
 
-      // If shop still not found, try to fetch directly from Airtable
       if (!shop) {
-        console.warn(
-          `Shop with ID ${shopIdNum} not found in primary storage, trying direct Airtable access`,
-        );
-
-        try {
-          // Try to fetch shop directly from Airtable
-          if ((storage as any).base) {
-            console.log(`Querying Airtable directly for Shop ID ${shopIdNum}`);
-            // Get all shops from Airtable to find the one with matching ID
-            const records = await (storage as any).base("Shops").select().all();
-
-            for (const record of records) {
-              // Check if this record has our ID - log each shop being checked
-              console.log(
-                `Checking Airtable shop: ID=${record.fields.id}, Name=${record.fields.name}`,
-              );
-
-              if (
-                record.fields.id &&
-                parseInt(record.fields.id) === shopIdNum
-              ) {
-                console.log(
-                  `Found shop in Airtable with ID ${shopIdNum}: ${record.fields.name}`,
-                );
-                // Convert Airtable record to our shop format
-                shop = {
-                  id: parseInt(record.fields.id),
-                  name: record.fields.name || `Shop ${shopIdNum}`,
-                  description: record.fields.description || null,
-                  ownerId: 1, // Default owner ID
-                  icon: record.fields.icon || "shopping-bag",
-                  iconColor: record.fields.icon || "gray", // Use icon field as color based on mapping
-                  status: record.fields.status || "active",
-                };
-                break;
-              }
-            }
-          }
-        } catch (airtableError) {
-          console.error(
-            "Error fetching shop directly from Airtable:",
-            airtableError,
-          );
-        }
-
-        // If still not found, return error
-        if (!shop) {
-          console.error(
-            `Shop with ID ${shopIdNum} not found in Airtable or system`,
-          );
-          return res.status(404).json({ message: "Shop not found" });
-        }
+        console.error(`Shop with ID ${shopIdNum} not found in database`);
+        return res.status(404).json({ message: "Shop not found" });
       }
 
       console.log(`Found shop: ${shop.name}`);
@@ -886,165 +657,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .json({ message: "Insufficient balance on NFC card" });
       }
 
-      // Update card balance
-      let updatedCard;
-      try {
-        // Search for the card again by cardId to get the latest Airtable record ID
-        const freshAirtableCard = await storage.getNfcCardByCardId(card.cardId);
-
-        if (freshAirtableCard && (freshAirtableCard as any).airtableRecordId) {
-          // Use the Airtable record ID directly for updates
-          console.log(
-            `Using Airtable Record ID ${(freshAirtableCard as any).airtableRecordId} for direct update`,
-          );
-
-          try {
-            // Update the card using Airtable's API directly
-            const airtableFields = {
-              balance: card.balance - amount,
-              lastUsed: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Bangkok",
-              }),
-            };
-
-            // Airtable expects fields to be passed directly, not wrapped in a fields object
-            // Access the Airtable base from the storage implementation
-            if ((storage as any).base) {
-              const updatedRecord = await (storage as any)
-                .base("NFCCards")
-                .update(
-                  (freshAirtableCard as any).airtableRecordId,
-                  airtableFields,
-                );
-              console.log(
-                "Successfully updated card in Airtable:",
-                updatedRecord.fields.balance,
-              );
-            } else {
-              throw new Error("Airtable base not available");
-            }
-
-            updatedCard = {
-              ...card,
-              balance: card.balance - amount,
-              lastUsed: new Date(),
-            };
-          } catch (directUpdateError) {
-            console.error(
-              "Error with direct Airtable update:",
-              directUpdateError,
-            );
-            throw directUpdateError;
-          }
-        } else {
-          // Fall back to regular update
-          updatedCard = await storage.updateNfcCard(card.id, {
-            balance: card.balance - amount,
-            lastUsed: new Date(),
-          });
-        }
-      } catch (updateError) {
-        console.error("Error updating card:", updateError);
-        // Create fallback updated card
-        updatedCard = {
-          ...card,
-          balance: card.balance - amount,
-          lastUsed: new Date(),
-        };
-        console.log(
-          `Using fallback updated card with balance ${updatedCard.balance}`,
-        );
-      }
+      const updatedCard = await storage.updateNfcCard(card.id, {
+        balance: card.balance - amount,
+        lastUsed: new Date(),
+      });
 
       // Create transaction record
-      let transaction;
-      try {
-        // Try to create transaction directly in Airtable
-        if ((storage as any).base) {
-          try {
-            // Create fields object directly without 'fields' wrapper
-            const transactionFields = {
-              orderNumber,
-              amount,
-              shopId: shopIdNum.toString(),
-              cardId: card.cardId,
-              status: "completed",
-              previousBalance: card.balance,
-              newBalance: card.balance - amount,
-              timestamp: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Bangkok",
-              }),
-              items: req.body.items ?? "", // <<<< เพิ่มบรรทัดนี้!
-              shopName: req.body.shopName ?? shop.name,
-              type: "purchase",
-              cart: cart ? JSON.stringify(cart) : "",
-            };
-
-            // Create the transaction directly
-            const createdRecord = await (storage as any)
-              .base("Transactions")
-              .create(transactionFields);
-            transaction = {
-              id:
-                parseInt(createdRecord.id) ||
-                Math.floor(Math.random() * 1000) + 1000,
-              orderNumber: createdRecord.fields?.orderNumber, // << ตรงนี้!
-              amount,
-              shopId: shopIdNum,
-              cardId: card.cardId, // Use actual NFC card ID instead of internal ID
-              type: "purchase", // For our interface
-              status: "completed",
-              previousBalance: card.balance,
-              newBalance: card.balance - amount,
-              timestamp: new Date(
-                new Date().toLocaleString("en-US", {
-                  timeZone: "Asia/Bangkok",
-                }),
-              ),
-            };
-            console.log("Successfully created transaction in Airtable");
-          } catch (directTransactionError) {
-            console.error(
-              "Error creating transaction directly in Airtable:",
-              directTransactionError,
-            );
-            throw directTransactionError;
-          }
-        } else {
-          // Fall back to storage interface
-          // Convert cardId (string) to an integer for the transaction
-          const numericCardId = parseInt(card.id.toString());
-
-          transaction = await storage.createTransaction({
-            amount,
-            shopId: shopIdNum,
-            cardId: numericCardId, // Use numeric ID for database schema compatibility
-            type: "purchase", // Required field for TypeScript
-            status: "completed",
-            previousBalance: card.balance,
-            newBalance: card.balance - amount,
-          });
-        }
-      } catch (transactionError) {
-        console.error("Error creating transaction:", transactionError);
-        // Create fallback transaction
-        transaction = {
-          id: transaction?.id,
-          orderNumber, //  อิอิ
-          amount,
-          shopId: shopIdNum,
-          cardId: card.cardId, // Use actual NFC card ID instead of internal ID
-          // Note: type is needed for our interface but not for Airtable
-          type: "purchase",
-          status: "completed",
-          previousBalance: card.balance,
-          newBalance: card.balance - amount,
-          timestamp: new Date(
-            new Date().toLocaleString("en-US", { timeZone: "Asia/Bangkok" }),
-          ),
-        };
-        console.log(`Using fallback transaction with ID ${transaction.id}`);
-      }
+      const transaction = await storage.createTransaction({
+        amount,
+        shopId: shopIdNum,
+        cardId: card.id,
+        status: "completed",
+        previousBalance: card.balance,
+        newBalance: card.balance - amount,
+        items: req.body.items ?? "",
+        shopName: req.body.shopName ?? shop.name,
+        type: "purchase",
+        cart: cart ? JSON.stringify(cart) : "",
+        orderNumber,
+      });
 
       res.json({
         success: true,
@@ -1065,10 +696,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       let txns: Transaction[] = [];
 
-      // ถ้า storage รับเป็น number ต้องแปลงก่อน
-      if (typeof storage.getTransactionsByCard === "function" && cardId) {
-        const cardIdNum = Number(cardId);
-        txns = await storage.getTransactionsByCard(cardIdNum);
+      if (cardId) {
+        const rawCardId = String(cardId);
+        const cardIdNum = Number(rawCardId);
+
+        if (!Number.isNaN(cardIdNum)) {
+          txns = await storage.getTransactionsByCard(cardIdNum);
+        } else {
+          const card = await storage.getNfcCardByCardId(rawCardId);
+          txns = card ? await storage.getTransactionsByCard(card.id) : [];
+        }
       } else if (
         typeof storage.getTransactionsByShop === "function" &&
         shopId
@@ -1086,13 +723,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (shopId) {
         txns = txns.filter((txn) => `${txn.shopId}` === `${shopId}`);
       }
-
-      const toDate = (value: string | Date | undefined): Date => {
-        if (!value) return new Date(0);
-        if (value instanceof Date) return value;
-        return new Date(value);
-      };
-
       txns = txns
         .sort((a, b) => (a.orderNumber ?? 0) - (b.orderNumber ?? 0))
         .slice(-50); // ใช้ slice(-50) เพื่อดึง 50 อันหลังสุด (เก่าสุด→ใหม่สุด)
@@ -1112,7 +742,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (typeof userId !== "number") {
         return res.status(401).json({ message: "No userId" });
       }
-      const shop = await storage.getShop(userId);
+      const shop = await storage.getShopByOwnerId(userId);
 
       const shopId = shop?.id;
       if (!shopId) {

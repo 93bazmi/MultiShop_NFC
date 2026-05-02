@@ -22,17 +22,17 @@ import { useAuth } from "@/components/auth/AuthProvider";
 
 function HomeRedirect() {
   const [, setLocation] = useLocation();
-  const { shop, isLoading } = useAuth();
+  const { role, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading) {
-      if (shop) {
-        setLocation("/shop/me");
+    if (!isLoading && role) {
+      if (role === "admin") {
+        setLocation("/topup");
       } else {
-        setLocation("/login");
+        setLocation("/shop/me");
       }
     }
-  }, [isLoading, shop, setLocation]);
+  }, [isLoading, role, setLocation]);
 
   return null;
 }
@@ -44,9 +44,11 @@ function App() {
         <Switch>
           {/* Public layout */}
           <Route path="/topup">
-            <AdminLayout>
-              <TopupPage />
-            </AdminLayout>
+            <ProtectedRoute role="admin">
+              <AdminLayout>
+                <TopupPage />
+              </AdminLayout>
+            </ProtectedRoute>
           </Route>
           <Route path="/nfc-test">
             <AdminLayout>
@@ -61,9 +63,7 @@ function App() {
 
           {/* Main layout + protected */}
           <Route path="/login">
-            <MainLayout>
-              <LoginPage />
-            </MainLayout>
+            <LoginPage />
           </Route>
           <ProtectedRoute>
             <Route path="/">
@@ -72,9 +72,11 @@ function App() {
               </MainLayout>
             </Route>
             <Route path="/shop/me">
-              <UserLayout>
-                <ShopDetailPage />
-              </UserLayout>
+              <ProtectedRoute role="user">
+                <UserLayout>
+                  <ShopDetailPage />
+                </UserLayout>
+              </ProtectedRoute>
             </Route>
             <Route path="/products">
               <UserLayout>

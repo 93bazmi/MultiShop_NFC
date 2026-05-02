@@ -12,10 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Settings, User, Database, CreditCard, Key, Save, Store } from "lucide-react";
 import { config } from "@/lib/airtable";
 
-const SettingsPage = () => {
+  const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("account");
-  const [apiKey, setApiKey] = useState(config.apiKey);
-  const [baseId, setBaseId] = useState(config.baseId);
+  const [databaseProvider, setDatabaseProvider] = useState(config.databaseProvider);
   const { toast } = useToast();
 
   // Fetch user data (for demo)
@@ -143,40 +142,39 @@ const SettingsPage = () => {
               <div className="space-y-6">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
                   <p className="text-sm text-yellow-800">
-                    <strong>Note:</strong> These API settings are used to connect to your Airtable database.
-                    Make sure to keep your API key secure and never share it publicly.
+                    <strong>Note:</strong> These settings describe your backend database connection.
+                    This project now uses PostgreSQL through the server API instead of Airtable.
                   </p>
                 </div>
                 
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="api-key" className="text-right">
-                      API Key
+                    <Label htmlFor="db-provider" className="text-right">
+                      Provider
                     </Label>
                     <div className="col-span-3">
                       <Input 
-                        id="api-key" 
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        type="password"
+                        id="db-provider" 
+                        value={databaseProvider}
+                        onChange={(e) => setDatabaseProvider(e.target.value)}
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        Your Airtable API Key
+                        Active backend database provider
                       </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="base-id" className="text-right">
-                      Base ID
+                    <Label htmlFor="db-engine" className="text-right">
+                      Engine
                     </Label>
                     <div className="col-span-3">
                       <Input 
-                        id="base-id" 
-                        value={baseId}
-                        onChange={(e) => setBaseId(e.target.value)}
+                        id="db-engine" 
+                        value="PostgreSQL"
+                        readOnly
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        Your Airtable Base ID
+                        Database engine configured on the server
                       </p>
                     </div>
                   </div>
@@ -189,7 +187,7 @@ const SettingsPage = () => {
                       <div className="space-y-0.5">
                         <Label htmlFor="sync-frequency">Automatic Sync</Label>
                         <p className="text-sm text-gray-500">
-                          Automatically sync data with Airtable
+                          Keep application state in sync with PostgreSQL data
                         </p>
                       </div>
                       <Switch id="sync-frequency" defaultChecked />

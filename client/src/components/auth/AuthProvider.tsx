@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+interface User {
+  id: number;
+  username: string;
+  role: "admin" | "user";
+}
+
 interface Shop {
   id: number;
   name: string;
@@ -8,10 +14,13 @@ interface Shop {
   iconColor: string;
   status: string;
   ownerId: number;
+  username?: string;
 }
 
 interface AuthContextType {
+  user: User | null;
   shop: Shop | null;
+  role: "admin" | "user" | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<string | null>;
@@ -30,9 +39,11 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [shop, setShop] = useState<Shop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [role, setRole] = useState<"admin" | "user" | null>(null);
 
   // ดึงข้อมูล shop ตาม session ปัจจุบัน
   const fetchShop = async () => {
@@ -55,6 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // mount: fetch shop ตาม session ปัจจุบัน
   useEffect(() => {
+    fetchAuth();
     fetchShop();
   }, []);
 
@@ -77,8 +89,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setError(payload.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
         return null;
       }
-      // *** สำคัญ ***: ใช้ user object ที่ login response กลับมาทันที
-      setShop(payload.user);
+      setUser(payload.user);
+      setRole(payload.user.role);
+      await fetchShop(); // ดึง shop จาก session หลัง login
       return payload.user.id;
     } catch (err) {
       console.error("Login error:", err);
@@ -86,6 +99,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return null;
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchAuth = async () => {
+    try {
+      const res = await fetch("/api/auth/me", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setRole(data.role); // ✅ สำคัญ
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -102,9 +127,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const value: AuthContextType = {
+    user,
     shop,
     isAuthenticated: !!shop,
     isLoading,
+    role,
     login,
     logout,
     error,

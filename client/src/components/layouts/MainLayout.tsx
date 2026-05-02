@@ -21,9 +21,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { shop, isAuthenticated, logout } = useAuth();
 
   const navigation = [
-    // { name: "เติมเงิน", href: "/topup", icon: PlusCircle },
-    // { name: "ทดสอบ NFC", href: "/nfc-test", icon: Wifi },
-    // { name: "history", href: "/history", icon: Wifi },
+    { name: "เติมเงิน", href: "/topup", icon: PlusCircle },
+    { name: "ทดสอบ NFC", href: "/nfc-test", icon: Wifi },
+    { name: "history", href: "/history", icon: Wifi },
   ];
 
   return (

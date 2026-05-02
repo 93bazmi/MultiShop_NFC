@@ -18,7 +18,7 @@ interface MainLayoutProps {
 
 const AdminLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [location] = useLocation();
-  const { shop, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const navigation = [
     { name: "Top up", href: "/topup", icon: PlusCircle },
@@ -51,23 +51,23 @@ const AdminLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </nav>
 
           {/* User Menu */}
-          {/* <div className="flex items-center space-x-4">
-            {isAuthenticated && shop ? (
+          <div className="flex items-center space-x-4">
+            {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 rounded-full p-0">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback>
-                        {shop.name.charAt(0).toUpperCase()}
+                        {user.username.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56" forceMount>
                   <div className="p-2">
-                    <p className="font-medium">{shop.name}</p>
+                    <p className="font-medium">{user.username}</p>
                     <p className="text-sm text-muted-foreground">
-                      @{shop.username}
+                      @{user.username}
                     </p>
                   </div>
                   <DropdownMenuItem onClick={logout}>
@@ -84,7 +84,7 @@ const AdminLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 </Button>
               </Link>
             )}
-          </div> */}
+          </div>
         </div>
       </header>
 

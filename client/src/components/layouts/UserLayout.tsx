@@ -18,7 +18,7 @@ interface MainLayoutProps {
 
 const UserLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [location] = useLocation();
-  const { shop, isAuthenticated, logout } = useAuth();
+  const { user, shop, isAuthenticated, logout } = useAuth();
 
   const navigation = [
     { name: "Home", href: "/shop/me", icon: PlusCircle },
@@ -51,7 +51,7 @@ const UserLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
-            {isAuthenticated && shop ? (
+            {isAuthenticated && shop && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 rounded-full p-0">
@@ -66,7 +66,7 @@ const UserLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   <div className="p-2">
                     <p className="font-medium">{shop.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      @{shop.username}
+                      @{user.username}
                     </p>
                   </div>
                   <DropdownMenuItem onClick={logout}>

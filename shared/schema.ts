@@ -79,7 +79,6 @@ export const nfcCards = pgTable("nfc_cards", {
 });
 
 export const insertNfcCardSchema = createInsertSchema(nfcCards).pick({
-  id: true,
   cardId: true,
   balance: true,
   active: true,
@@ -132,7 +131,4 @@ export type InsertNfcCard = z.infer<typeof insertNfcCardSchema>;
 export type NfcCard = typeof nfcCards.$inferSelect;
 
 export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
-export type Transaction = typeof transactions.$inferSelect & {
-  items?: string;
-  orderNumber?: number | string; // <--- เพิ่มตรงนี้
-};
+export type Transaction = typeof transactions.$inferSelect;

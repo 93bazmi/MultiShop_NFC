@@ -57,6 +57,7 @@ const ShopDetailPage = () => {
     : [];
   // Filter เฉพาะของ allfood หรือ shop ปกติ
   let displayedProducts: Product[] = [];
+  const shopData = shop as Shop;
   if (shop?.icon === "food" && shop?.username?.startsWith("allfood")) {
     // All Food → เมนู food ทุกร้าน
     displayedProducts = (products as Product[]).filter(
@@ -65,7 +66,7 @@ const ShopDetailPage = () => {
   } else {
     // ร้านอื่น โชว์แค่ของร้านนั้น
     displayedProducts = (products as Product[]).filter(
-      (p) => String(p.shopId) === String(shop.id),
+      (p) => String(p.shopId) === String(shopData.id),
     );
   }
   // ใส่ .sort() ตรงนี้
@@ -163,9 +164,6 @@ const ShopDetailPage = () => {
     );
   }
 
-  // TypeScript safety for shop object
-  const shopData = shop as Shop;
-
   return (
     <>
       <div className="space-y-6">
@@ -211,11 +209,11 @@ const ShopDetailPage = () => {
           </div>
 
           <CardContent className="p-6">
-            {/* <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800">
+            <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800">
               สินค้าของร้าน
-            </h2> */}
+            </h2>
 
-            {/* <div>
+            <div>
               {productsLoading ? (
                 <div className="grid grid-cols-2 gap-3">
                   {[1, 2, 3, 4].map((i) => (
@@ -253,7 +251,7 @@ const ShopDetailPage = () => {
                   )}
                 </div>
               )}
-            </div> */}
+            </div>
 
             <div className="mt-6 flex justify-center">
               <Button
