@@ -55,10 +55,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.cookie("sessionId", sessionId, {
-        httpOnly: true,
-        sameSite: "lax",
-        // secure: true, // in prod under HTTPS
-      });
+  httpOnly: true,
+  sameSite: "none",
+  secure: true,
+});
       return res.status(200).json({ sessionId, user });
     } catch (error) {
       console.error("Login error:", error);
