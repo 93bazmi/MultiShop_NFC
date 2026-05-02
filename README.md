@@ -42,7 +42,7 @@ This system is designed for event usage, with the following key features:
 
 **Backend:** Node.js
 
-**Database:** Airtable
+**Database:** PostgreSQL
 
 **NFC:** POS device with NFC support
 
