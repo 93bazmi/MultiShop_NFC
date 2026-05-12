@@ -4,7 +4,14 @@ MultiShop NFC is a multi-vendor event marketplace system that allows customers t
 
 This project is designed for events like festivals or markets, making payments faster, easier, and cashless 💳
 
+<<<<<<< HEAD
 ## 🌐 Live Demo
+=======
+# 💚 Live Demo
+https://multi-shop-nfc.vercel.app
+
+## 📌 Overview
+>>>>>>> dd71bf188dc56fe1a0ae87e5f6ab8b6d37d2fca6
 
 [https://multi-shop-nfc.vercel.app](https://multi-shop-nfc.vercel.app)
 
@@ -47,11 +54,11 @@ Password: coffee1234
 
 **Backend:** Node.js
 
-**Database:** Airtable
+**Database:** PostgreSQL
 
 **NFC:** POS device with NFC support
 
-**Development:** Replit
+**Deployment**: Vercel(Frontend), Render(Backend)
 
 ## 🚀 Getting Started
 
