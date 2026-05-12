@@ -45,6 +45,15 @@ const ShopDetailPage = () => {
   // ดึง product ทั้งหมด
   const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: [API.PRODUCTS],
+    queryFn: async () => {
+      const response = await fetch(API.PRODUCTS);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch products");
+      }
+
+      return response.json();
+    },
   });
   const sortedProducts = Array.isArray(products)
     ? [...products].sort((a: Product, b: Product) => {
