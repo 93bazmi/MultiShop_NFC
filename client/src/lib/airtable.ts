@@ -1,15 +1,19 @@
+const BASE_URL =
+  import.meta.env.VITE_API_URL?.replace(/\/$/, "") || "";
+
 export const config = {
-  databaseProvider: import.meta.env.VITE_DATABASE_PROVIDER || "postgresql",
+  databaseProvider:
+    import.meta.env.DATABASE_URL || "postgresql",
 };
 
 export const API = {
-  USERS: '/api/users',
-  SHOPS: '/api/shops',
-  PRODUCTS: '/api/products',
-  NFC_CARDS: '/api/nfc-cards',
-  TRANSACTIONS: '/api/transactions',
-  NFC_PAYMENT: '/api/nfc-payment',
-  NFC_TOPUP: "/api/nfc-topup" // เพิ่ม endpoint สำหรับเติมเงิน
+  USERS: `${BASE_URL}/api/users`,
+  SHOPS: `${BASE_URL}/api/shops`,
+  PRODUCTS: `${BASE_URL}/api/products`,
+  NFC_CARDS: `${BASE_URL}/api/nfc-cards`,
+  TRANSACTIONS: `${BASE_URL}/api/transactions`,
+  NFC_PAYMENT: `${BASE_URL}/api/nfc-payment`,
+  NFC_TOPUP: `${BASE_URL}/api/nfc-topup`,
 };
 
 export function formatQuery(params: Record<string, any>) {
