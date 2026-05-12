@@ -87,4 +87,11 @@ npm run dev
 
 ## 📸 Screenshots
 
-![Home](./screenshots/home.png)
+![](./screenshots/login.png)
+![](./screenshots/topup.png)
+![](./screenshots/topup-success.png)
+![](./screenshots/coffee-shop.png)
+![](./screenshots/order.png)
+![](./screenshots/payment.png)
+![](./screenshots/payment-success.png)
+![](./screenshots/receipt.png)
