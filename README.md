@@ -4,34 +4,42 @@ MultiShop NFC is a multi-vendor event marketplace system that allows customers t
 
 This project is designed for events like festivals or markets, making payments faster, easier, and cashless 💳
 
-## 📌 Overview
+## 🌐 Live Demo
 
-This system is designed for event usage, with the following key features:
+[https://multi-shop-nfc.vercel.app](https://multi-shop-nfc.vercel.app)
 
-* Supports multiple vendors within a single system (multi-shop)
-* Enables cashless payments using NFC
-* Allows customers to top up their NFC balance
-* Provides NFC balance checking
-* Vendors can select menu items and process payments via POS
-* Generates receipts after successful transactions
+```bash
+Test Login (Admin)
+Username: admin
+Password: admin1234
+```
+
+```bash
+Test Login (Coffee Shop)
+Username: coffee
+Password: coffee1234
+```
 
 ## ⚙️ Features
 
 👤 **Customer**
-* Top up balance to NFC card
-* Check remaining balance
-* Pay instantly by tapping NFC
+
+- Top up balance to NFC card
+- Check remaining balance
+- Pay instantly by tapping NFC
 
 🏪 **Vendor / POS**
-* Display menu items
-* Select products and calculate total price
-* Receive payment via NFC
-* Print receipt after payment
+
+- Display menu items
+- Select products and calculate total price
+- Receive payment via NFC
+- Print receipt after payment
 
 💳 **NFC System**
-* Read/write NFC cards
-* Auto deduct balance
-* Validate balance before payment
+
+- Read/write NFC cards
+- Auto deduct balance
+- Validate balance before payment
 
 ## 🛠️ Tech Stack
 
@@ -48,20 +56,24 @@ This system is designed for event usage, with the following key features:
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/your-username/multishop-nfc.git
 cd multishop-nfc
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
+
 ### 3. Run the project
+
 ```bash
 npm run dev
 ```
 
 ## 📸 Screenshots
-![Home](./screenshots/home.png)
 
+![Home](./screenshots/home.png)
